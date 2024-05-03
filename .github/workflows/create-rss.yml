@@ -6,10 +6,16 @@ on:
       - main
 
 jobs:
+  push:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - name: Check out this repo
       uses: actions/checkout@v3
+    - name: Checkout to correct branch
+      run: |-
+        git checkout ${{ github.ref_name }}
     - name: Install granary
       run: |-
         pip install granary
