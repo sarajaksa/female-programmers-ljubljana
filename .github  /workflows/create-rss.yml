@@ -1,0 +1,24 @@
+name: Create RSS feed from the main page
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v3
+    - name: Install granary
+      run: |-
+        pip install granary
+    - name: Create RSS feed
+      run: |-
+        echo -e "from granary import microformats2, rss\nprint(rss.from_activities(microformats2.html_to_activities(\"\"\"$(cat index.html)\"\"\"), feed_url=\"https://sarajaksa.github.io/female-programmers-ljubljana/rss.xml\"))" | python > rss.xml
+        git config user.name "Sara's Bot"
+        git config user.email "sarajaksa@sarajaksa.eu"
+        git add -A
+        timestamp=$(date -Iminutes)
+        git commit -m "Latest RSS changes ${timestamp}" || exit 0
+        git push
